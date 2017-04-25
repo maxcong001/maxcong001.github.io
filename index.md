@@ -1,37 +1,75 @@
-## Welcome to GitHub Pages
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Resume by savagecm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+<body>
+<section class="main-content">
+<!--      <h3>  -->
+<h1><a id="user-content-联系方式" class="anchor" href="#联系方式" aria-hidden="true"></a>联系方式</h1>
+<ul>
+  <li>手机：15153229320 （<code>青岛</code>）</li>
+  <li>Email：<a href="mailto:savagecm@qq.com">savagecm@qq.com</a> </li>
+  <!--  <li>QQ/微信号：savagecm</li>  -->
+</ul>
 
-You can use the [editor on GitHub](https://github.com/maxcong001/maxcong001.github.io/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+<h1><a id="user-content-个人信息" class="anchor" href="#个人信息" aria-hidden="true"></a>个人信息</h1>
+<ul>
+  <li>丛明明(Max)/男/1988 </li>
+  <li>硕士/青岛大学信号与信息处理 </li>
+  <li>工作年限：3年</li>
+  <li><p>Github：<a href="https://github.com/maxcong001">https://github.com/maxcong001</a></p></li>  
+  <li><p>博客：<a href="http://blog.csdn.net/max_cong">http://blog.csdn.net/max_cong</a></p></li>
+</ul>
+<hr>
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/maxcong001/maxcong001.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+<h1><a id="user-content-工作经历" class="anchor" href="#工作经历" aria-hidden="true"></a>工作经历</h1>
+  <h2><a id="青岛朗讯科技通讯设备有限公司 （ 2014年6月 至今 ）" class="anchor" href="#青岛朗讯科技通讯设备有限公司 （ 2014年6月 至今 ）" aria-hidden="true"></a>青岛朗讯科技通讯设备有限公司 （ 2014年6月 至今 ）</h2>
+    <h3><a id="iAGCF development" class="anchor" href="#iAGCF development" aria-hidden="true"></a>iAGCF development</h3>
+    <p>iAGCF(access gateway control function)项目研发。独立完成iAGCF整个产品从32bit elf到64bit elf迁移。参与iAGCF reverse engineering 以及文档的撰写。iAGCF call load auto scrpit 研发。研发iAGCF UT envrionment(based on goole test) 以及UT代码的编写。 iAGCF质量提高</p>
+    <h3><a id="IMS N+K session statefull" class="anchor" href="#IMS N+K session statefull" aria-hidden="true"></a>IMS N+K session statefull</h3>
+    <p>单独完成该项目IM（internal message）底层通信部分的研发。现成为NOKIA blue team（原朗讯产品）nTAS container与container 底层通信机制</p>
+    <h3><a id="NOKIA uTAS" class="anchor" href="#NOKIA uTAS" aria-hidden="true"></a>NOKIA uTAS</h3>
+    <p>单独完成hlr-sync queue 由LCP平台向NOKIA conainer平台的迁移</p>
+    <h3><a id="NOKIA DBwrapper" class="anchor" href="#NOKIA DBwrapper" aria-hidden="true"></a>NOKIA DBwrapper</h3>
+    <p>独立完成NOKIA DBwrapper(一种DB抽象机制，让用户忽略底层数据库具体是redis还是其他数据库) sync interface for nTAS. 创新的提出复用async interface, 极大的缩减了开发周期。</p>
+    <p>正在研发DBwrapper对不同DBcommand的支持（eg：sorted set）</p>
+    <h3><a id="NOKIA SDL/DB proxy" class="anchor" href="#NOKIA SDL/DB proxy" aria-hidden="true"></a>NOKIA SDL 适配/DB proxy</h3>
+    <p>SDL是NOKIA正在做的一种对不同厂家DB的集中管理工具,研发DBwrapper与其适配，并将DBwrapper做成DBproxy模式</p>
+    <h3><a id="NOKIA building block -- DB proxy" class="anchor" href="#NOKIA building block -- DB proxy" aria-hidden="true"></a>NOKIA building block -- DB proxy</h3>
+    <p>独立完成DBproxy Clinet/Server 框架开发，同scrum team共同完成google protocol buffer + gRPC通信机制</p>
+    <h3><a id="NOKIA Session ID affinity" class="anchor" href="#NOKIA Session ID affinity" aria-hidden="true"></a>NOKIA Session ID affinity</h3>
+    <p>keep out going message of a connetion pool in one frame(context)</p>
+    <h3><a id="NOKIA FOSS Docker" class="anchor" href="#NOKIA FOSS Docker" aria-hidden="true"></a>NOKIA FOSS Docker 成员</h3>
+    <p>FOSS docker team 重要成员</p>
+<hr>
+<h1><a id="成果" class="anchor" href="#成果" aria-hidden="true"></a>成果</h1>
+  <h2><a id="工作成果" class="anchor" href="#工作成果" aria-hidden="true"></a>工作成果</h2>
+  <ul>
+    <li>2015年获得部门 individual Awards</li>
+    <li>2016获得公司Best Quality Award</li>
+    <li>多次获得团队奖项</li>
+  </ul>
+  <h2><a id="业余成果" class="anchor" href="#业余成果" aria-hidden="true"></a>业余成果</h2>
+  <ul>
+    <li>2016青岛黑客马拉松暨国际创新大赛，一人队获得大赛一等奖。同时获得“最受投资人关注”大奖</li>
+    <li>研发一套智能网关与智能节点系统，创新的改变了"编程与控制终端的模式"和终端的智能化，同时在ARM（32bit）中引入Dock，运用多个container互联实现了智能网关。</li>
+    <li>开源项目(智能传感器网络):https://github.com/maxcong001/hackthon</li>
+    <li>开源项目(common thread pool solution):https://github.com/maxcong001/threadPool</li>
+    <li>开源项目(common timer solution):https://github.com/maxcong001/timer</li>
+    <li>开源项目(common timer/TCP/HTTP connection, base on libevent):https://github.com/maxcong001/translib</li>
+    <li>开源项目(common message bus with backend thread pool):https://github.com/maxcong001/message_bus</li>
+    <li>更多好玩的项目暂时private^-^,敬请关注</li>
+  </ul>
+<!-- </ul>  -->
+<footer class="site-footer">
+  <span class="site-footer-owner"><a href="https://github.com/savagecm/resume">Resume</a> is maintained by <a href="https://github.com/savagecm">Max Cong(https://github.com/savagecm)</a>.</span>
+</footer>
+</body>
+</html>
