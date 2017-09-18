@@ -24,8 +24,8 @@
   <li>丛明明(Max)/男/1988 </li>
   <li>硕士/青岛大学信号与信息处理 </li>
   <li>工作年限：3年</li>
-  <li><p>Github：<a href="https://github.com/maxcong001">https://github.com/maxcong001</a></p></li>  
-  <li><p>博客：<a href="http://blog.csdn.net/max_cong">http://blog.csdn.net/max_cong</a></p></li>
+  <li>Github：<a href="https://github.com/maxcong001">https://github.com/maxcong001</a></li>  
+  <li>博客：<a href="http://blog.csdn.net/max_cong">http://blog.csdn.net/max_cong</a></li>
 </ul>
 <hr>
 
@@ -65,6 +65,17 @@
     <li>开源项目(common timer solution):https://github.com/maxcong001/timer</li>
     <li>开源项目(common timer/TCP/HTTP connection, base on libevent):https://github.com/maxcong001/translib</li>
     <li>开源项目(common message bus with backend thread pool):https://github.com/maxcong001/message_bus</li>
+    <li>开源项目(smart IOT gateway based on RF24l01):https://github.com/maxcong001/smartGateway</li>
+    <li>开源项目(wrapper DB operation):https://github.com/maxcong001/DBwrapper</li>
+    <li>开源项目(docker log plugin ):https://github.com/maxcong001/docker_log_plugin</li>
+    <li>开源项目(common heartbeat solution):https://github.com/maxcong001/heartbeat</li>
+    <li>开源项目(common connection manager):https://github.com/maxcong001/connection_manager</li>
+    <li>开源项目(async IO service):https://github.com/maxcong001/io-service</li>
+    <li>开源项目(common TCP proxy):https://github.com/maxcong001/TCP_proxy</li>
+    <li>开源项目(translib 0MQ version):https://github.com/maxcong001/translib_on_top_of_0mq</li>
+    <li>开源项目(redis simulator ):https://github.com/maxcong001/RedisSim</li>
+    <li>开源项目(common DBmanager):https://github.com/maxcong001/DBManager</li>
+    <li>更多好玩的项目访问https://github.com/maxcong0访问</li>
     <li>更多好玩的项目暂时private^-^,敬请关注</li>
   </ul>
 <!-- </ul>  -->
