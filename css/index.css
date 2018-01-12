@@ -1,4 +1,4 @@
-@charset "gb2312";
+@charset "utf-8";
 /* blog */
 .blog { margin: 30px 20px; overflow: hidden }
 .blog figure { background: #ececec; border: #FFF 10px solid; width: 270px; height: 430px; float: left; margin: 0 8px 0; overflow: hidden }

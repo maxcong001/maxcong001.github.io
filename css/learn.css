@@ -1,4 +1,4 @@
-@charset "gb2312";
+@charset "utf-8";
 .rnav { }
 .rnav { margin: 30px auto; overflow: hidden; overflow: hidden; padding-left: 100px }
 .rnav li { width: 120px; text-align: center; display: inline-block; margin-bottom: 5px; margin-right: 5px; float: left; height: 40px; line-height: 38px; background: rgba(255,255,255,0.2) }
