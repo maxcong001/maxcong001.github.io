@@ -1,0 +1,1271 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Max DIA</title>
+</head>
+
+<body>
+  <div id="article_details" class="details">
+    <style type="text/css">
+      .embody {
+        padding: 10px 10px 10px;
+        margin: 0 -20px;
+        border-bottom: solid 1px #ededed;
+      }
+
+      .embody_b {
+        margin: 0;
+        padding: 10px 0;
+      }
+
+      .embody .embody_t,
+      .embody .embody_c {
+        display: inline-block;
+        margin-right: 10px;
+      }
+
+      .embody_t {
+        font-size: 12px;
+        color: #999;
+      }
+
+      .embody_c {
+        font-size: 12px;
+      }
+
+      .embody_c img,
+      .embody_c em {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .embody_c img {
+        width: 30px;
+        height: 30px;
+      }
+
+      .embody_c em {
+        margin: 0 20px 0 10px;
+        color: #333;
+        font-style: normal;
+      }
+    </style>
+    <script type="text/javascript">
+      $(function () {
+        try {
+          var lib = eval("(" + $("#lib").attr("value") + ")");
+          var html = "";
+          if (lib.err == 0) {
+            $.each(lib.data, function (i) {
+              var obj = lib.data[i];
+              //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+              html += ' <a href="' + obj.url + '" target="_blank">';
+              html += ' <img src="' + obj.logo + '">';
+              html += ' <em><b>' + obj.name + '</b></em>';
+              html += ' </a>';
+            });
+            if (html != "") {
+              setTimeout(function () {
+                $("#lib").html(html);
+                $("#embody").show();
+              }, 100);
+            }
+          }
+        } catch (err) { }
+
+      });
+    </script>
+
+    <h2>
+      <a name="t0"></a>Introduction</h2>
+    <p>Meshwork follows the layered
+      <a target="_blank" href="http://en.wikipedia.org/wiki/OSI_model">
+        OSI model</a> in which one layer is implemented on top of another.</p>
+    <h2>
+      <a name="t1"></a>
+      <a target="_blank" id="user-content-l1-physical-layer" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/02.-Layer-Overview:-L1,-L2,-L3#l1-physical-layer"></a>L1: Physical Layer</h2>
+    <ul>
+      <li>The PHY layer is implemented in Cosa within
+        <code>Wireless::Driver</code> implementations for each supported chip</li>
+      <li>Defines medium properties, frequency, modulation, bitrate</li>
+      <li>Optional message CRC support</li>
+      <li>Depending on the implementation it might be reliable (with PHY-based ACK) or unreliable (send-and-forget)</li>
+      <li>Depending on the implementation this layer may implement "listen before talking" within the driver or within the chip
+      </li>
+      <li>Automatic retry may be implemented within the driver or the chip, though Meshwork also allows implements retry on a
+        higher level</li>
+    </ul>
+    <h2>
+      <a name="t2"></a>
+      <a target="_blank" id="user-content-l2-data-link-layer" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/02.-Layer-Overview:-L1,-L2,-L3#l2-data-link-layer"></a>L2: Data Link Layer</h2>
+    <ul>
+      <li>Provided in Cosa with the
+        <code>Wireless::Driver</code> public API</li>
+      <li>Adds a reliable point-to-point communication based on following entities:
+        <ul>
+          <li>Network ID</li>
+          <li>Source Node ID</li>
+          <li>Destination Node ID</li>
+          <li>Destination Node Port (used to differentiate between application and system messages)</li>
+          <li>L2 Payload</li>
+        </ul>
+      </li>
+      <li>L2 provides the following functions:
+        <ul>
+          <li>Send + ACK (optional)</li>
+          <li>Receive + ACK (optional)</li>
+          <li>Broadcast (no ACK)</li>
+        </ul>
+      </li>
+    </ul>
+    <p>Message parameters:</p>
+    <ul>
+      <li>Nwk ID: network identifier</li>
+      <li>Dst ID: destination node (for singlecast) or 0xFF (for broadcast)</li>
+      <li>Dst Port: destination port</li>
+      <li>L2 Payload: L2 byte payload</li>
+    </ul>
+    <p>Although the above data is not necessarily transferred (entirely) as data via the physical medium we will use the following
+      payload notation for the sake of simplicity:</p>
+    <pre><code>Nwk ID | Dst ID | Dst Port | L2 Payload
+    </code></pre>
+    <h2>
+      <a name="t3"></a>
+      <a target="_blank" id="user-content-l3-network-layer" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/02.-Layer-Overview:-L1,-L2,-L3#l3-network-layer"></a>L3: Network Layer</h2>
+    <ul>
+      <li>Adds network routing and mesh capabilities based on L2</li>
+      <li>Based on new entities:
+        <ul>
+          <li>Delivery Mode: Direct, Routed, Flood</li>
+          <li>Network-level ACK (regardless of the routing mode)</li>
+          <li>ACK with payload</li>
+          <li>Routing Path</li>
+        </ul>
+      </li>
+      <li>Provides new functions:
+        <ul>
+          <li>Ability to send a Direct (in-sight) message from source node to destination node</li>
+          <li>Ability to send a Routed message using a known route (up to 8 intermediate hops)</li>
+          <li>Ability to send a message using the Flood mechanism, which discovers a route to the destination node automatically</li>
+          <li>Ability to send back a Routed ACK (optionally with payload) to the source node</li>
+          <li>Automatic message rerouting on qualified nodes</li>
+          <li>Automatic Flood message rebroadcasting on qualified nodes</li>
+        </ul>
+      </li>
+    </ul>
+    <p>Payload structure:</p>
+    <pre><code>Nwk ID | Dst ID | Dst Port | L2 Payload
+    L2 Payload = Seq | Nwk Ctrl | Delivery Info | L3 Payload
+    Seq = Sequence Number
+    Nwk Ctrl = Direct OR Routed OR Flood | ACK Flag
+    Delivery Info = Direct Info OR Routed Info OR Flood Info
+    Direct Info = (empty/none)
+    Route Info = Node Count X | Routed Src ID | Node 1 | … | Node X | Routed Dst ID | Breadcrumb Bitfield
+    Flood Info = Discovered Node Count X | Flood Src ID | … | Flood Dst ID
+    </code></pre>
+    <p>
+      <code>Nwk Ctrl</code> (network control) defines how a message should be delivered based on the following routing modes:</p>
+    <ul>
+      <li>Direct: classical "in sight" delivery from Src to Dst</li>
+      <li>Routed: specifies all nodes (ordered) to be used as a delivery route between Routed Src and Routed Dst</li>
+      <li>Flood: specifies only Flood Src and Flood Dst nodes, and sends the message as broadcast</li>
+      <li>ACK: a bitflag defining a network-level ACK message for the above modes. ACK messages are created by the Dst node and
+        sent back to Dst. When delivering Direct ACK the message is sent as a direct singlecast. For Routed ACK the entire
+        route and order or nodes is preserved as in the original singlecast, but the intermediate hops resend the message
+        to the next hop in the route in the reverse order (from Routed Dst to Routed Src). An ACK for the Flood delivery
+        is always sent as a Routed ACK by using the route from the flood discovery</li>
+    </ul>
+    <h3>
+      <a name="t4"></a>
+      <a target="_blank" id="user-content-l3-direct-mode" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/02.-Layer-Overview:-L1,-L2,-L3#l3-direct-mode"></a>L3: Direct Mode</h3>
+    <ul>
+      <li>If Src and Dst are within direct range the sender may decide to use Direct delivery</li>
+      <li>In this mode Direct Info is currently defined as empty (no bytes) as no additional network control information is needed
+      </li>
+      <li>A message is sent from Src to Dst, and Dst replies with an ACK</li>
+      <li>Direct mode can also be used for broadcast messages, which will be handled only within direct range (no routing). In
+        this case Dst ID is set to 0xFF and no ACK is expected</li>
+    </ul>
+    <p>In the below example we have Src ID 0x01 and Dst ID 0x05 exchanging one message and one ACK:</p>
+    <p>
+      <img src="https://github.com/SinishaDjukic/Meshwork/blob/master/Documentation/Wiki/ProtocolLayers/L3_Direct.png?raw=true"
+        alt="Direct">
+    </p>
+    <pre><code>(1) Singlecast:
+    0xCO5A | 0x05 | 0x00 | Direct | L3 Payload
+    
+    (2) Singlecast ACK:
+    0xCO5A | 0x01 | 0x00 | Direct + ACK | L3 ACK Payload
+    </code></pre>
+    <h3>
+      <a name="t5"></a>
+      <a target="_blank" id="user-content-l3-routed-mode" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/02.-Layer-Overview:-L1,-L2,-L3#l3-routed-mode"></a>L3: Routed Mode</h3>
+    <ul>
+      <li>Routing requires that the entire path/route of intermediate nodes is included in the Routing Info, as well as the source
+        and destination nodes. Any intermediate hop, as well as the receiver, can also use container received route for maintenance
+        purposes (e.g. update its routing table)</li>
+      <li>Routed messages are always sent as singlecast</li>
+    </ul>
+    <p>A routed message and ACK follows with one intermediate node with ID 0x02:</p>
+    <p>
+      <img src="https://github.com/SinishaDjukic/Meshwork/blob/master/Documentation/Wiki/ProtocolLayers/L3_Routed.png?raw=true"
+        alt="Routed">
+    </p>
+    <pre><code>(1) Singlecast:
+    0xC05A | 0x02 | 0x00 | Routed | 1 | 0x01 | 0x02 | 0x05 | 0 | L3 Payload
+    
+    (2) Singlecast:
+    0xC05A | 0x05 | 0x00 | Routed | 1 | 0x01 | 0x02 | 0x05 | 1 | L3 Payload
+    
+    (3) Singlecast ACK:
+    0xC05A | 0x02 | 0x00 | Routed + ACK | 1 | 0x01 | 0x02 | 0x05 | 0 | L3 ACK Payload
+    
+    (4) Singlecast ACK:
+    0xC05A | 0x01 | 0x00 | Routed + ACK | 1 | 0x01 | 0x02 | 0x05 | 1 | L3 ACK Payload
+    </code></pre>
+    <h3>
+      <a name="t6"></a>
+      <a target="_blank" id="user-content-l3-flood-mode" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/02.-Layer-Overview:-L1,-L2,-L3#l3-flood-mode"></a>L3: Flood Mode</h3>
+    <ul>
+      <li>Flood Mode allows the sender to not specify the exact routing path and let the listening and routing nodes help it
+        resolve the route. The actual resolution is based on network "flooding", i.e. the routing nodes re-transmit the message
+        further until it reaches the destination. The ultimate receiver then sends a Routed ACK using the route from the
+        received flood message</li>
+      <li>In order to avoid endless loops and duplicate re-transmissions every time a message is re-transmitted the intermediate
+        node appends itself to the end of the routing list in the message (right before the Flood Dst ID). The maximum number
+        of intermediate nodes (excluding Flood Src and Flood Dst) is 8 (eight)</li>
+      <li>In the direction from the sender to the destination the broadcast method is used, since the route is unknown. The sender
+        is not guaranteed to receive a network-level ACK and should instead listen for an ACK with a timeout before considering
+        it failed</li>
+      <li>There may be multiple ACKs generated from Flood Dst, each with a different route. These paths can be stored to improve
+        the network robustness</li>
+      <li>It is possible to send the L3 Payload with the original flood message (as in the example below), but that also means
+        more RF load for the entire network. Instead, the current implementation first sends an empty (NOP) Flood message
+        first and waits for an ACK from which to extract a valid route; then, it sends a Routed message with the discovered
+        route, and waits for another ACK. This approach reduces the transmission times on all nodes across the network due
+        to the smaller amount of data in the first step, and may be significant for larger networks. This approach also avoids
+        the risk of delivering one and the same payload to the destination more than once (via different routes)</li>
+    </ul>
+    <p>Example of flood delivery:</p>
+    <p>
+      <img src="https://github.com/SinishaDjukic/Meshwork/blob/master/Documentation/Wiki/ProtocolLayers/L3_Flood.png?raw=true"
+        alt="Flood">
+    </p>
+    <pre><code>(1) Broadcast:
+    0xC05A | 0x00 | 0x00 | Flood | 0 | 0x01 | 0x05 | L3 Payload
+    
+    (2) Broadcast:
+    0xC05A | 0x00 | 0x00 | Flood | 1 | 0x01 | 0x02 | 0x05 | L3 Payload
+    
+    (3) Singlecast ACK:
+    0xC05A | 0x02 | 0x00 | Routed + ACK | 1 | 0x01 | 0x02 | 0x05 | 0 | L3 ACK Payload
+    
+    (4) Singlecast ACK:
+    0xC05A | 0x01 | 0x00 | Routed + ACK | 1 | 0x01 | 0x02 | 0x05 | 1 | L3 ACK Payload
+    
+    (5) Singlecast ACK:
+    0xC05A | 0x01 | 0x00 | Routed + ACK | 0 | 0x01 | 0x05 | 0 | L3 ACK Payload
+    </code></pre>
+    <p>The flexibility of Flood mode ACK handling also allows us to extend its usage to service discovery: Flood Dst Port can
+      be used to designate some network-level service (similar to IP-based networks). For example, we can define a port to
+      which Network Controllers would respond, but the sender doesn't need to have prior knowledge of its ID - it can be
+      discovered via Flood mode automatically. In this case, Flood Dst ID could be defined as 0xFF (no concrete ID), while
+      the port would typically be other than 0x00. For example:</p>
+    <pre><code>0xC05A | 0xF0 | 0x00 | Flood | 0 | 0x01 | 0xFF | L3 Payload
+    </code></pre>
+    <p>As with the standard Flood delivery the intermediate nodes insert their IDs just before Flood Dst ID 0xFF and the flow
+      process continues until it reaches a node, which can handle the request designated for Dst Port 0xFE. The handling
+      node sends back a Routed ACK, but fills in the Routed Dst ID with its own node ID.</p>
+    <p>The original sender of the message needs to wait for an ACK for a potentially long time until it can consider the message
+      failed. In theory, since MAX_ROUTING_HOPS is 8 the sender would need to wait for at least 8 times the maximum possible
+      hops. The max time is currently calculated to be:</p>
+    <pre><code>TIMEOUT_ACK_FLOOD = TIMEOUT_ACK_DIRECT * (MAX_ROUTING_HOPS + 2)
+    </code></pre>
+    <p>Where (in millis):</p>
+    <pre><code>TIMEOUT_ACK_DIRECT = (uint16_t) TIMEOUT_ACK_RECEIVE * (DEFAULT_SEND_RETRY + 1)
+    TIMEOUT_ACK_RECEIVE = 500
+    DEFAULT_SEND_RETRY = 2
+    </code></pre>
+    <p>Which totals up to 15 seconds in the worst case with the current default values (which are also subject to fine-tuning).
+      This is more than enough to ensure the message has (not) been delivered, and, besides reducing the timeouts and retries
+      there is not much more that can be done algorithm-wise.</p>
+    <p>Still, there is a corner case that has recently been optimized. If the sender has no neighbor nodes in its direct range
+      then it is fairly easy to "fail fast". Thus, a FLOOD ACK message has been introduced, which tells the sender that the
+      FLOOD message has been received "at least once". If there is no recipient for this first hop then the sender fails
+      much faster.</p>
+    <h3>
+      <a name="t7"></a>
+      <a target="_blank" id="user-content-l3-routed-vs-flood-mode" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/02.-Layer-Overview:-L1,-L2,-L3#l3-routed-vs-flood-mode"></a>L3: Routed vs Flood Mode</h3>
+    <ul>
+      <li>Differences:
+        <ul>
+          <li>In case of Routed mode the route is known in advance, and carried in the Routed Info field, whereas in Flood only
+            the Src and Dst nodes are filled out and the node list is expanded as we go (each traversed node adds itself
+            to the list right before the Flood Dst node)</li>
+          <li>In case of Routed mode we use Singlecast to send out and forward a message, whereas in Flood we use a Broadcast</li>
+          <li>In case of Routed Mode we can expect an ACK, but this is not guaranteed with Flood</li>
+        </ul>
+      </li>
+      <li>Similarities:
+        <ul>
+          <li>In both modes the ACK is delivered as Singlecast, not Broadcast</li>
+          <li>Respective Info fields always contain at least the Src and Dst nodes</li>
+          <li>The node list in both directions (send and ACK) is maintained in its original order (from Src to Dst)</li>
+        </ul>
+      </li>
+    </ul>
+    <div>
+      <h2>
+        <a name="t8"></a>
+        <a target="_blank" id="user-content-send-flow" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/03.-Layer-L3:-Send-and-Receive#send-flow"></a>L3 Send Flow</h2>
+      <p>
+        <img src="https://github.com/SinishaDjukic/Meshwork/blob/master/Documentation/Wiki/RFActivity/Send.jpg?raw=true" alt="Send">
+      </p>
+      <h2>
+        <a name="t9"></a>
+        <a target="_blank" id="user-content-receive-flow" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/03.-Layer-L3:-Send-and-Receive#receive-flow"></a>Receive Flow</h2>
+      <p>
+        <img src="https://github.com/SinishaDjukic/Meshwork/blob/master/Documentation/Wiki/RFActivity/Receive.jpg?raw=true" alt="Receive">
+      </p>
+      <br>
+    </div>
+    <div>
+      <h2>
+        <a name="t10"></a>L4: Network Management Layer</h2>
+      <ul>
+        <li>Adds network management capabilities, such as:
+          <ul>
+            <li>Network discovery</li>
+            <li>Network services</li>
+            <li>Adding and removing nodes to/from a network</li>
+            <li>Node enumeration, discovery and rediscovery</li>
+          </ul>
+        </li>
+        <li>The current design does not require a well-known centralized "network controller", but rather uses the concept of
+          services (combined with Flood delivery) to discover a node, which is able to provide the needed management functionality.
+          Thus, network management can be carried out by multiple nodes in a distributed manner, while any possible synchronization
+          between those management nodes (if needed) is carried out on higher levels of the stack</li>
+        <li>Definition of Network Services is based on the Dst Port for any message sent. The L3 Payload of a message is specific
+          to the target service itself, but advertising the service on the port level, which is already available on L2,
+          allows us to have simple and efficient routing implementations, and to intercept service calls without the need
+          for parsing these messages within the routing nodes</li>
+        <li>Below are some service definitions and their respective ports:</li>
+      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">Port</th>
+            <th align="center">Broadcast</th>
+            <th align="center">Singlecast</th>
+            <th align="left">Service</th>
+            <th align="left">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td align="left">0xFF</td>
+            <td align="center">Yes</td>
+            <td align="center">Yes</td>
+            <td align="left">NOP</td>
+            <td align="left">No Operation service. Acts as a ping and expects an ACK on the same port from the destination node</td>
+          </tr>
+          <tr>
+            <td align="left">0xFE</td>
+            <td align="center">Yes</td>
+            <td align="center">Yes</td>
+            <td align="left">Network Info Request</td>
+            <td align="left">Requests network information (available nodes, etc.)</td>
+          </tr>
+          <tr>
+            <td align="left">0xFD</td>
+            <td align="center">Yes</td>
+            <td align="center">No</td>
+            <td align="left">Add Mode Announce</td>
+            <td align="left">Sent periodically by a node capable of adding new nodes</td>
+          </tr>
+          <tr>
+            <td align="left">0xFC</td>
+            <td align="center">No</td>
+            <td align="center">Yes</td>
+            <td align="left">Add Mode Request</td>
+            <td align="left">Sent by a device that would like to be included</td>
+          </tr>
+          <tr>
+            <td align="left">0xFB</td>
+            <td align="center">Yes</td>
+            <td align="center">No</td>
+            <td align="left">Remove Mode Announce</td>
+            <td align="left">Sent periodically by a node capable of removing nodes</td>
+          </tr>
+          <tr>
+            <td align="left">0xFA</td>
+            <td align="center">No</td>
+            <td align="center">Yes</td>
+            <td align="left">Remove Mode Request</td>
+            <td align="left">Sent by a device that would like to be removed</td>
+          </tr>
+          <tr>
+            <td align="left">0x64 - 0xF9</td>
+            <td align="center">-</td>
+            <td align="center">-</td>
+            <td align="left">-</td>
+            <td align="left">Reserved for future usage</td>
+          </tr>
+          <tr>
+            <td align="left">0x00 - 0x63</td>
+            <td align="center">Yes</td>
+            <td align="center">Yes</td>
+            <td align="left">Application Service</td>
+            <td align="left">3rd-party application message ports (128 total)</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>
+        <a name="t11"></a>
+        <a target="_blank" id="user-content-l4-nop-service" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/04.-Layer-L4-(WIP!)#l4-nop-service"></a>L4: NOP Service</h3>
+      <ul>
+        <li>NOP service (No OPeration) can be used for "ping" services, much like it is used in IP networks</li>
+        <li>NOP/Singlecast can be used with both Direct and Routed Modes</li>
+        <li>NOP/Broadcast may technically be used with Direct Mode, but would only make sense for nodes in direct range</li>
+        <li>NOP/Broadcast is typically meant to be used with Flood Mode, where we know the destination, but not the route</li>
+        <li>The current implementation supports implicit NOP on L3 as well (when the L3 Payload is empty)</li>
+      </ul>
+      <h3>
+        <a name="t12"></a>
+        <a target="_blank" id="user-content-l4-network-info-request" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/04.-Layer-L4-(WIP!)#l4-network-info-request"></a>L4: Network Info Request</h3>
+      <ul>
+        <li>Provides detailed information about the network</li>
+        <li>At least, it needs to provide a list of known node IDs</li>
+        <li>There may be multiple nodes that can respond to this request. How the information between them is synchronized is
+          a matter of another service/mechanism</li>
+      </ul>
+      <h3>
+        <a name="t13"></a>
+        <a target="_blank" id="user-content-l4-add-mode-announce" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/04.-Layer-L4-(WIP!)#l4-add-mode-announce"></a>L4: Add Mode Announce</h3>
+      <ul>
+        <li>A node capable of including a new device can send out periodic Add Mode Announces, whenever it is in "adding" mode.
+          For simplicity, we can call these nodes "controllers". Announce messages are needed, so that devices, which are
+          not yet part of the network can discover which network is currently open, and which node ID to talk to</li>
+        <li>Add Mode Announce is delivered as Broadcast/Flood Mode with Dst Node 0x00, which means the entire network will be
+          flooded and maximum range is guaranteed</li>
+        <li>Once the new device has received the Add Mode Announce it will assume a temporary node ID 0xFF and send an Add Request
+          message to the controller, which needs to ACK it. From this point on a route and communication between the controller
+          and a new candidate for adding has been established and the real adding process can begin</li>
+      </ul>
+      <h3>
+        <a name="t14"></a>
+        <a target="_blank" id="user-content-l4-add-mode-request" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/04.-Layer-L4-(WIP!)#l4-add-mode-request"></a>L4: Add Mode Request</h3>
+      <ul>
+        <li>New nodes joining the network must always assume a temporary node ID 0xFF and use it for communication with the respective
+          controller, until the controller allocates and assigns a usable node ID for them</li>
+        <li>The new node sends an Add Request to the controller (which then stops broadcasting Add Announce immediately). The
+          controller responds with an ACK and then continues processing the request by allocating a new ID, sending it to
+          the end device via Singlecast/Routed, which must ACK the message, so that the controller can consider the ID finally
+          allocated (otherwise the allocation fails within a predefined timeout)</li>
+      </ul>
+      <h3>
+        <a name="t15"></a>
+        <a target="_blank" id="user-content-l4-remove-mode-announce" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/04.-Layer-L4-(WIP!)#l4-remove-mode-announce"></a>L4: Remove Mode Announce</h3>
+      <ul>
+        <li>A node capable of removing a new device can send out periodic Remove Mode Announces, whenever it is in "removing"
+          mode. For simplicity, we can call these nodes "controllers". Announce messages are needed, so that devices, which
+          are part of the network can discover which node ID to talk to to ask for removal</li>
+        <li>Remove Mode Announce is delivered as Broadcast/Floog Mode with Dst Node 0x00, which means the entire network will
+          be flooded and maximum range is guaranteed</li>
+        <li>Once a device has received the Remove Mode Announce it will send a Remove Request message to the controller</li>
+      </ul>
+      <h3>
+        <a name="t16"></a>
+        <a target="_blank" id="user-content-l4-remove-mode-request" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/04.-Layer-L4-(WIP!)#l4-remove-mode-request"></a>L4: Remove Mode Request</h3>
+      <ul>
+        <li>A node sends a Remove Request to the controller (which then stops broadcasting Remove Mode Announce immediately).
+          The controller responds with an ACK and then continues processing the request by sending a confirmation message
+          to the end device, waiting for its ACK, and then removing the ID from the used list (otherwise the removal fails
+          within a predefined timeout)</li>
+      </ul>
+      <h3>
+        <a name="t17"></a>
+        <a target="_blank" id="user-content-l4-rules-and-definitions" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/04.-Layer-L4-(WIP!)#l4-rules-and-definitions"></a>L4: Rules and Definitions</h3>
+      <ul>
+        <li>Based on L2, L3 and L4 definitions we can now summarize some information</li>
+        <li>Dst ID 0x00 is used for Broadcast messages</li>
+        <li>Dst ID 0xFF is used as a temporary node ID for new nodes that are candidates for adding</li>
+        <li>Dst Port 0x00-0x63 is available for 3rd-party code</li>
+        <li>Dst Port 0x64-0xF9 is reserved by the protocol for future usage</li>
+        <li>Dst Port 0xFA-0xFE is used for network management functions</li>
+        <li>Dst Port 0xFF is used for NOP</li>
+      </ul>
+      <p>Note that it is possible to use Meshwork without the L4 layer, if network management functionality is not required
+        (or doesn't fit the MCU). In such case the network setup is done statically within the code and all mesh capabilities
+        of the network are still preserved and utilized.</p>
+      <h3>
+        <a name="t18"></a>
+        <a target="_blank" id="user-content-l4-add-mode-sequence-example" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/04.-Layer-L4-(WIP!)#l4-add-mode-sequence-example"></a>L4: Add Mode Sequence Example</h3>
+      <p>
+        <img src="https://github.com/SinishaDjukic/Meshwork/blob/master/Documentation/Wiki/ProtocolLayers/SEQ_AddMode_01.png?raw=true"
+          alt="Add Mode Sequence ">
+      </p>
+      <h1>
+        <a name="t19"></a>L7 Message Port</h1>
+      <p>The reserved message port for L7 Meshwork layer is 0x88 (136 dec).</p>
+      <h1>
+        <a name="t20"></a>
+        <a target="_blank" id="user-content-l7-payload-structure" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#l7-payload-structure"></a>L7 Payload Structure</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>&nbsp;</td>
+            <td>Command identifier</td>
+          </tr>
+          <tr>
+            <td>2-N</td>
+            <td>&nbsp;</td>
+            <td>Command-specific data</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Command Seq notes:</p>
+      <ul>
+        <li>Values [0-127] signify a command sequence number</li>
+        <li>Bit 7 set to high to denote that more response will follow. Bit 7 will further be referred to as MCFLAG (Multi-Command
+          Flag)
+        </li>
+        <li>When bit 7 set to low means this was a last response to the specified command sequence</li>
+      </ul>
+      <p>Command ID notes:</p>
+      <ul>
+        <li>Values [0-127] signify a valid command ID</li>
+        <li>Bit 7 set to high to denote that the request is related to the command's meta information. Bit 7 will further be
+          referred to as METAFLAG</li>
+        <li>For the Meshwork-defined commands, the METAFLAG is only valid for PROPERTY_GET and PROPERTY_REP commands. Its usage
+          elsewhere must result in ACK(Invalid)</li>
+        <li>Command ID values [0-31] are reserved for Meshwork.</li>
+      </ul>
+      <h1>
+        <a name="t21"></a>
+        <a target="_blank" id="user-content-l7-payload-commands" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#l7-payload-commands"></a>L7 Payload Commands</h1>
+      <p>Only the following commands are defined by Meshwork. Custom commands can be added and handled by subclasses, as long
+        as they reside outside of the Meshwork-reserved command range.</p>
+      <h2>
+        <a name="t22"></a>
+        <a target="_blank" id="user-content-generic-commands---required" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#generic-commands---required"></a>Generic Commands - Required</h2>
+      <ul>
+        <li>ACK: mandatory immediate response to PROPERTY_GET, PROPERTY_SET, and META_XXX_GET</li>
+      </ul>
+      <h2>
+        <a name="t23"></a>
+        <a target="_blank" id="user-content-property-commands---required" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#property-commands---required"></a>PROPERTY Commands - Required</h2>
+      <ul>
+        <li>PROPERTY_GET</li>
+        <li>PROPERTY_REP</li>
+        <li>PROPERTY_SET</li>
+      </ul>
+      <h2>
+        <a name="t24"></a>
+        <a target="_blank" id="user-content-meta-commands---recommended" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#meta-commands---recommended"></a>META Commands - Recommended</h2>
+      <p>These are not mandatory, but highly recommended:</p>
+      <ul>
+        <li>META_DEVICE_GET</li>
+        <li>META_DEVICE_REP</li>
+        <li>META_CLUSTER_GET</li>
+        <li>META_CLUSTER_REP</li>
+        <li>META_ENDPOINT_GET</li>
+        <li>META_ENDPOINT_REP</li>
+      </ul>
+      <p>The reason why these are not required is to reduce the code size in wall-gardened environments, where cluster definitions
+        and IDs are hard-coded at both the data producer and the consumer.</p>
+      <h1>
+        <a name="t25"></a>
+        <a target="_blank" id="user-content-command-specification" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#command-specification"></a>Command Specification</h1>
+      <h2>
+        <a name="t26"></a>
+        <a target="_blank" id="user-content-generic-commands" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#generic-commands"></a>Generic Commands</h2>
+      <h3>
+        <a name="t27"></a>
+        <a target="_blank" id="user-content-ack-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#ack-command"></a>ACK Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>ACK</td>
+            <td>Message acknowledge</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Message status</td>
+          </tr>
+          <tr>
+            <td>3-N</td>
+            <td>&nbsp;</td>
+            <td>Status-specific data (optional)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Status:</p>
+      <ul>
+        <li>Processed. MCFLAG must be low, since no further response is expected</li>
+        <li>Data: N/A</li>
+        <li>Invalid. MCFLAG must be low, since no further response is expected</li>
+        <li>Data: N/A</li>
+        <li>Forbidden. MCFLAG must be low, since no further response is expected</li>
+        <li>Data: N/A</li>
+        <li>Scheduled: scheduled for processing. MCFLAG must be high, as the sender should expect a response</li>
+        <li>Data: approx. millis (16-bit) after which the message will be processed</li>
+        <li>Not supported. MCFLAG must be low, since no further response is expected &lt;&lt;&lt; TODO</li>
+        <li>Data: N/A</li>
+      </ul>
+      <h2>
+        <a name="t28"></a>
+        <a target="_blank" id="user-content-property-commands" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#property-commands"></a>PROPERTY Commands</h2>
+      <h3>
+        <a name="t29"></a>
+        <a target="_blank" id="user-content-property_get-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#property_get-command"></a>PROPERTY_GET Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>PROPERTY_GET</td>
+            <td>Get a property value</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Cluster number</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&nbsp;</td>
+            <td>Endpoint number</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>
+        <a name="t30"></a>
+        <a target="_blank" id="user-content-property_rep-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#property_rep-command"></a>PROPERTY_REP Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>PROPERTY_REP</td>
+            <td>Report a property value</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Cluster number</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&nbsp;</td>
+            <td>Endpoint number</td>
+          </tr>
+          <tr>
+            <td>4-N</td>
+            <td>&nbsp;</td>
+            <td>Endpoint type/subtype-specific data</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>
+        <a name="t31"></a>
+        <a target="_blank" id="user-content-property_set-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#property_set-command"></a>PROPERTY_SET Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>PROPERTY_SET</td>
+            <td>Set a property value</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Cluster number</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&nbsp;</td>
+            <td>Endpoint number</td>
+          </tr>
+          <tr>
+            <td>4-N</td>
+            <td>&nbsp;</td>
+            <td>Endpoint type/subtype-specific data</td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        <a name="t32"></a>
+        <a target="_blank" id="user-content-meta-commands" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#meta-commands"></a>META Commands</h2>
+      <p>Note that Cluster=0xFF and Endpoint=0xFF are reserved.</p>
+      <h3>
+        <a name="t33"></a>
+        <a target="_blank" id="user-content-meta_device_get-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#meta_device_get-command"></a>META_DEVICE_GET Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>META_DEVICE_GET</td>
+            <td>Device metadata information</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Additional request flags</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Flags:</p>
+      <ul>
+        <li>7b: Return information for all Endpoints (only if 0b set). Each META_CLUSTER_REP will be followed by META_ENDPOINT_REP
+          for all contained endpoints</li>
+        <li>6b: Return information for all Clusters. META_DEVICE_REP will be followed by META_CLUSTER_REP for all contained clusters
+        </li>
+        <li>0-5b: Reserved/ignored</li>
+      </ul>
+      <h3>
+        <a name="t34"></a>
+        <a target="_blank" id="user-content-meta_device_rep-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#meta_device_rep-command"></a>META_DEVICE_REP Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>META_DEVICE_REP</td>
+            <td>Report device metadata information</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Device type</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&nbsp;</td>
+            <td>Device subtype</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>&nbsp;</td>
+            <td>Number of clusters</td>
+          </tr>
+          <tr>
+            <td>5-N</td>
+            <td>&nbsp;</td>
+            <td>Additional device data. Reserved</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>MCFLAG must be set for all but the last message in the series if META_DEVICE_GET has Flags 7b and/or 6b set.</p>
+      <h3>
+        <a name="t35"></a>
+        <a target="_blank" id="user-content-meta_cluster_get-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#meta_cluster_get-command"></a>META_CLUSTER_GET Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>META_CLUSTER_GET</td>
+            <td>Required metadata information</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Additional request flags</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&nbsp;</td>
+            <td>Cluster number</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Cluster:</p>
+      <ul>
+        <li>0xFF: Return information for all Clusters. META_DEVICE_REP will be followed by META_CLUSTER_REP for all contained
+          clusters. Flag 6b must be set</li>
+        <li>0x00-0xFE: A valid cluster number</li>
+      </ul>
+      <p>Flags:</p>
+      <ul>
+        <li>7b: Return information for all Endpoints (only if 0b set). Each META_CLUSTER_REP will be followed by META_ENDPOINT_REP
+          for all contained endpoints</li>
+        <li>6b: Return information for all Clusters</li>
+        <li>0-6b: Reserved/ignored</li>
+      </ul>
+      <h3>
+        <a name="t36"></a>
+        <a target="_blank" id="user-content-meta_cluster_rep-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#meta_cluster_rep-command"></a>META_CLUSTER_REP Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>META_CLUSTER_REP</td>
+            <td>Report metadata information</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Cluster number</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&nbsp;</td>
+            <td>Cluster type</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>&nbsp;</td>
+            <td>Cluster subtype</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>&nbsp;</td>
+            <td>Total number of endpoints</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>MCFLAG must be set for all but the last message in the series if META_CLUSTER_REP has Flags 7b and/or 6b set.</p>
+      <h3>
+        <a name="t37"></a>
+        <a target="_blank" id="user-content-meta_endpoint_get-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#meta_endpoint_get-command"></a>META_ENDPOINT_GET Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>META_ENDPOINT_GET</td>
+            <td>Required metadata information</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Additional request flags</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&nbsp;</td>
+            <td>Cluster number</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>&nbsp;</td>
+            <td>Endpoint number</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Cluster:</p>
+      <ul>
+        <li>0x00-0xFE: A valid cluster number</li>
+      </ul>
+      <p>Flags:</p>
+      <ul>
+        <li>7b: Return information for all Endpoints (only if 0b set)</li>
+        <li>0-6b: Reserved/ignored</li>
+      </ul>
+      <h3>
+        <a name="t38"></a>
+        <a target="_blank" id="user-content-meta_endpoint_rep-command" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.-Layer-L7#meta_endpoint_rep-command"></a>META_ENDPOINT_REP Command</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>&nbsp;</td>
+            <td>Command sequence number</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>META_ENDPOINT_REP</td>
+            <td>Report metadata information</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&nbsp;</td>
+            <td>Cluster number</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&nbsp;</td>
+            <td>Endpoint number</td>
+          </tr>
+          <tr>
+            <td>4-5</td>
+            <td>&nbsp;</td>
+            <td>Endpoint type</td>
+          </tr>
+          <tr>
+            <td>6-7</td>
+            <td>&nbsp;</td>
+            <td>Unit type for the endpoint values</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>MCFLAG must be set for all but the last message in the series if META_ENDPOINT_REP has Flags 7b and/or 6b set.</p>
+      <p>Endpoint Type values [0x0000-0x7FFF] are reserved for Meshwork.Unit Type values [0x0000-0x7FFF] are reserved for Meshwork.
+      </p>
+      <p>
+        <br>
+      </p>
+      <p></p>
+      <h1 class="gh-header-title instapaper_title">
+        <a name="t39"></a>
+      </h1>
+      <h1>
+        <a name="t40"></a>Endpoint Types: Switches</h1>
+
+      <p></p>
+      <div id="wiki-body" class="wiki-body gollum-markdown-content instapaper_body">
+        <div class="markdown-body">
+          <p>Endpoint Types:</p>
+          <ul>
+            <li>ET_BINARYSWITCH</li>
+            <li>ET_MULTILEVELSWITCH</li>
+          </ul>
+          <h2>
+            <a name="t41"></a>
+            <a target="_blank" id="user-content-property_get-data" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.01.-Switches#property_get-data"></a>PROPERTY_GET Data</h2>
+          <p>No extra data.</p>
+          <h2>
+            <a name="t42"></a>
+            <a target="_blank" id="user-content-property_rep-data" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.01.-Switches#property_rep-data"></a>PROPERTY_REP Data</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Byte</th>
+                <th>Parameter</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>4</td>
+                <td>Current</td>
+                <td>Current value</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Target</td>
+                <td>Target value</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>The values are treated as unsigned bytes with the following range semantics:</p>
+          <ul>
+            <li>0: 0%</li>
+            <li>255: 100%</li>
+          </ul>
+          <p>Anything inbetween is interpolated freely by the device depending on the Endpoint type:</p>
+          <ul>
+            <li>ET_BINARYSWITCH: 1-254: 100%</li>
+            <li>ET_MULTILEVELSWITCH: gradual or rounded step values between fully off/deactivated and fully on/activated</li>
+          </ul>
+          <p>All reports must contain an actual target value, even if it has already been reached (i.e. Current=Target). Devices,
+            which cannot physically support the requested target value (e.g. value 55 for ES_BINARYSWITCH) must store it
+            and report back the requested target value (while recalculating the actual one internally).</p>
+          <p>After the (possibly recalculated) Target value has been reached the device must send PROPERTY_REP to:</p>
+          <ul>
+            <li>The device, which sent PROPERTY_GET. The Command Seq value must be maintained</li>
+            <li>The device, which sent PROPERTY_SET that caused the change. The Command Seq value must be maintained</li>
+            <li>The reporting node, according to the device's configuration (reporting node, discrete change, threshold change).
+              The Command Seq value is arbitrary in this case</li>
+          </ul>
+          <h2>
+            <a name="t43"></a>
+            <a target="_blank" id="user-content-property_set-data" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.01.-Switches#property_set-data"></a>PROPERTY_SET Data</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Byte</th>
+                <th>Parameter</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>4</td>
+                <td>Value</td>
+                <td>Switch value as unsigned byte</td>
+              </tr>
+              <tr>
+                <td>5-6</td>
+                <td>Time</td>
+                <td>Transition time in ms (unsigned short)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Duration is specified in milliseconds as 2 bytes. Value 0 means to use the device's default transition time. The
+            device is free to ignore the specified Time value completely if it does not support it.</p>
+        </div>
+      </div>
+      <h1>
+        <a name="t44"></a>Endpoint Types: Sensors</h1>
+      <p>Endpoint Types:</p>
+      <ul>
+        <li>TYPE_SENSOR_BINARY</li>
+        <li>TYPE_SENSOR_MULTILEVEL</li>
+        <li>TYPE_SENSOR_VOLTAGE</li>
+        <li>TYPE_SENSOR_TEMPERATURE</li>
+      </ul>
+      <h2>
+        <a name="t45"></a>
+        <a target="_blank" id="user-content-property_get-data" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.02.-Sensors#property_get-data"></a>PROPERTY_GET Data</h2>
+      <p>No extra data.</p>
+      <h2>
+        <a name="t46"></a>
+        <a target="_blank" id="user-content-property_rep-data" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.02.-Sensors#property_rep-data"></a>PROPERTY_REP Data</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4-N</td>
+            <td>Value</td>
+            <td>Current value</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>The structure of the Current value depends on the Endpoint type (see below).</p>
+      <p>The device must send PROPERTY_REP to:</p>
+      <ul>
+        <li>The device, which sent PROPERTY_GET. The Comand Seq value must be maintained</li>
+        <li>The reporting node, according to the device's configuration (reporting node, discrete change, threshold change).
+          The Comand Seq value is arbitrary in this case</li>
+      </ul>
+      <h3>
+        <a name="t47"></a>
+        <a target="_blank" id="user-content-type_sensor_binary-current" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.02.-Sensors#type_sensor_binary-current"></a>TYPE_SENSOR_BINARY: Current</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4</td>
+            <td>Value</td>
+            <td>Current value (unsigned byte)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>The sematics of the values are:</p>
+      <ul>
+        <li>0: deactivated</li>
+        <li>255: activated</li>
+      </ul>
+      <p>The relative usage of these values (e.g. whether deactivated means that the door has been closed) is device model-specific.</p>
+      <h3>
+        <a name="t48"></a>
+        <a target="_blank" id="user-content-type_sensor_multilevel-current" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.02.-Sensors#type_sensor_multilevel-current"></a>TYPE_SENSOR_MULTILEVEL: Current</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4-7</td>
+            <td>Value</td>
+            <td>Current value</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Current value is in signed
+        <a target="_blank" href="https://en.wikipedia.org/wiki/Q_(number_format)">
+          Q16.16</a> fixed point format.</p>
+      <h3>
+        <a name="t49"></a>
+        <a target="_blank" id="user-content-type_sensor_voltage-current" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.02.-Sensors#type_sensor_voltage-current"></a>TYPE_SENSOR_VOLTAGE: Current</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4-7</td>
+            <td>Value</td>
+            <td>Current value</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Current value is in signed
+        <a target="_blank" href="https://en.wikipedia.org/wiki/Q_(number_format)">
+          Q16.16</a> fixed point format.</p>
+      <p>Supported units:</p>
+      <ul>
+        <li>UNIT_PERCENTAGE_BYTE</li>
+        <li>UNIT_VOLT</li>
+      </ul>
+      <h3>
+        <a name="t50"></a>
+        <a target="_blank" id="user-content-type_sensor_temperature-current" class="anchor" href="https://github.com/SinishaDjukic/Meshwork/wiki/05.02.-Sensors#type_sensor_temperature-current"></a>TYPE_SENSOR_TEMPERATURE: Current</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Byte</th>
+            <th>Parameter</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4-7</td>
+            <td>Value</td>
+            <td>Current value</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Supported units:</p>
+      <ul>
+        <li>UNIT_TEMPERATURE_KELVIN</li>
+        <li>UNIT_TEMPERATURE_CELSIUS</li>
+        <li>UNIT_TEMPERATURE_FAHRENHEIT</li>
+      </ul>
+      <br>
+    </div>
+  </div>
+  </div>
+</body>
+
+</html>
