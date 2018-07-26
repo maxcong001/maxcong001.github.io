@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../../css/mermaid.css">
+  <title>Max Cong 个人博客 - 一个程序员</title>
+  <meta name="keywords" content="个人博客" />
+  <meta name="description" content="Max Cong 个人博客 - 一个程序员" />
+  <link href="../../css/base.css" rel="stylesheet">
+  <link href="../../css/about.css" rel="stylesheet">
+  <script src="../../js/scrollReveal.js"></script>
+  <script src="../../js/mermaid.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</head>
+<body>
+        <header>
+                <div class="logo" data-scroll-reveal="enter right over 1s">
+                    <a href="/">
+                        <img src="images/logo.png">
+                    </a>
+                </div>
+                <nav class="topnav" data-scroll-reveal="enter bottom over 1s after 1s">
+                    <a href="index.html">
+                        <span>首页</span>
+                        <span class="en">Home</span>
+                    </a>
+                    <a href="about.html">
+                        <span>关于我</span>
+                        <span class="en">About</span>
+                    </a>
+                    <a href="manshenghuo.html">
+                        <span>慢生活</span>
+                        <span class="en">Life</span>
+                    </a>
+                    <a href="learn.html">
+                        <span>碎言碎语</span>
+                        <span class="en">Doing</span>
+                    </a>
+                    <a href="learn.html">
+                        <span>学无止境</span>
+                        <span class="en">Learn</span>
+                    </a>
+                    <a href="gbook.html">
+                        <span>留言</span>
+                        <span class="en">Saying</span>
+                    </a>
+                </nav>
+            </header>
+
+<article>
+<div class="container">
+<div class="about left">
+  <div class="mermaid">
+        graph TB
+        WPsendCallState-.->|send translib message|WPPRSsendAutoXML
+        WPconstructDialog-.->|xml|prs
+        subgraph SRVprs
+        B2BUAProcEvent(B2BUAProcEvent)-->|invoke callback|SRVprs_entry
+        SRVprs_entry{SRVprs_entry} -->|IN_ORIG|SRVprs_in_orig(SRVprs_in_orig)
+        SRVprs_entry -->|IN_TERM|SRVprs_in_term(SRVprs_in_term)
+        SRVprs_entry -->|OUT_ORIG|SRVprs_out_orig(SRVprs_out_orig)
+        SRVprs_entry -->|OUT_TERM|SRVprs_out_term(SRVprs_out_term)
+        SRVprs_in_orig -->SRVprs_check_trigger(SRVprs_check_trigger)
+        SRVprs_in_orig -->stub  
+        SRVprs_in_term-->SRVprs_check_trigger(SRVprs_check_trigger)
+        SRVprs_in_term-->stub
+        SRVprs_out_orig-->SRVprs_check_trigger(SRVprs_check_trigger)
+        SRVprs_out_orig-->stub
+        SRVprs_out_term-->SRVprs_check_trigger(SRVprs_check_trigger)
+        SRVprs_out_term-->stub{switch}
+        style stub fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5
+        SRVprs_check_trigger-->SRVprs_check_if_armed(SRVprs_check_if_armed)
+        SRVprs_check_if_armed-.->|SRVPRS_TRIG_ENCOUNTERED|stub
+        stub-->|case SRVPRS_TRIG_ENCOUNTERED |SRVprs_prep_and_send_request
+        SRVprs_prep_and_send_request-->|IN_TERM or OUT_TERM |WPPRS_SEND_TERM_TRIGGER(WPPRS_SEND_TERM_TRIGGER)
+        SRVprs_prep_and_send_request-->|else |WPPRS_SEND_ORIG_TRIGGER(WPPRS_SEND_ORIG_TRIGGER)
+        WPPRS_SEND_ORIG_TRIGGER-->WPsendCallState(WPsendCallState)
+        WPPRS_SEND_TERM_TRIGGER-->WPsendCallState
+        end
+        subgraph prepare service date
+        sIPCallMgrPostMessage -.->|invoke callback|TAS_noDialog
+        TAS_noDialog-.->|invoke callback|TAS_NoCall 
+        TAS_NoCall -->TASdb_readreq(TASdb_readreq)
+        TASdb_readreq(TASdb_readreq)-.->|initiates DB read for subscriber|TASproc_spr
+        TASproc_spr(TASproc_spr) -->|the buildup of new call and dialog structures|B2BUAInit_new_call(B2BUAInit_new_call)
+        B2BUAInit_new_call --> |Initialize call_data.service_data after DB response|B2BUAinitServiceData(B2BUAinitServiceData)
+        end      
+        subgraph WP_main
+        WPPRSsendAutoXML -->WPconstructDialog(WPconstructDialog)
+        end
+        subgraph PRS
+        prs
+        end;
+  </div>
+</div>
+</div>
+</article>
+<footer> Design by Max Cong
+        <a href="/">copy right Max Cong</a>
+      </footer>
+</body>
+</html>
