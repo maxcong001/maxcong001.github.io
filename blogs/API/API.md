@@ -1,4 +1,3 @@
-```mermaid
 graph TB
 
 
@@ -8,6 +7,37 @@ WPconstructDialog-.->|xml|prs
 
 subgraph SRVprs
 B2BUAProcEvent(B2BUAProcEvent)-->|invoke callback|SRVprs_entry
+
+SRVprs_entry-->|RE/DEREG|SRVprs_register(SRVprs_register)
+
+
+SRVprs_register-->SRVprs_register_need_report(SRVprs_register_need_report)
+
+SRVprs_register_need_report-->|needed|WPPRS_SEND_REGISTER(WPPRS_SEND_REGISTER)
+
+SRVprs_entry-->SRVprs_report_call_status(SRVprs_report_call_status)
+
+SRVprs_report_call_status-->SRVprs_conf_report_call_status(SRVprs_conf_report_call_status)
+SRVprs_conf_report_call_status-->WPSEND_CONFIRMED(WPSEND_CONFIRMED)
+SRVprs_conf_report_call_status-->WPSEND_TERMINATED(WPSEND_TERMINATED)
+WPSEND_TERMINATED-->WPsendCallState
+WPSEND_CONFIRMED-->WPsendCallState
+
+SRVprs_report_call_status-->SRVprs_swbd_report_call_status(SRVprs_swbd_report_call_status)
+
+SRVprs_swbd_report_call_status-->SRVprs_swbd_prif_send(SRVprs_swbd_prif_send)
+
+SRVprs_swbd_prif_send-->WPSEND_TRYING(WPSEND_TRYING)
+SRVprs_swbd_prif_send-->WPSEND_CONFIRMED
+SRVprs_swbd_prif_send-->WPSEND_TERMINATED
+
+
+WPPRS_SEND_REGISTER-->WPsendCallState(WPsendCallState)
+WPSEND_TRYING-->WPsendCallState
+
+
+
+
 
 SRVprs_entry{SRVprs_entry} -->|IN_ORIG|SRVprs_in_orig(SRVprs_in_orig)
 SRVprs_entry -->|IN_TERM|SRVprs_in_term(SRVprs_in_term)
@@ -66,4 +96,3 @@ end
 subgraph PRS
 prs
 end
-```
