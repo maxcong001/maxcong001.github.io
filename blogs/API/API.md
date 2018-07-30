@@ -17,8 +17,16 @@ SRVprs_swbd_prif_send-->WPSEND_CONFIRMED
 SRVprs_swbd_prif_send-->WPSEND_TERMINATED
 WPPRS_SEND_REGISTER-->WPsendCallState(WPsendCallState)
 WPSEND_TERMINATED-->WPsendCallState
+WPPRS_SEND_TERMINATED-->WPsendCallState
 WPSEND_CONFIRMED-->WPsendCallState
 WPSEND_TRYING-->WPsendCallState
+SRVprs_entry -->SRVprs_audio_entry(SRVprs_audio_entry)
+SRVprs_audio_entry-->SRVprs_audio_report_prs(SRVprs_audio_report_prs)
+SRVprs_audio_report_prs-->WPPRS_SEND_COLLECTED(WPPRS_SEND_COLLECTED)
+SRVprs_audio_report_prs-->WPPRS_SEND_RECORDED
+SRVprs_audio_report_prs-->WPPRS_SEND_TERMINATED
+WPPRS_SEND_RECORDED-->WPsendCallState
+WPPRS_SEND_COLLECTED-->WPsendCallState
 SRVprs_entry{SRVprs_entry} -->|IN_ORIG|SRVprs_in_orig(SRVprs_in_orig)
 SRVprs_entry -->|IN_TERM|SRVprs_in_term(SRVprs_in_term)
 SRVprs_entry -->|OUT_ORIG|SRVprs_out_orig(SRVprs_out_orig)
