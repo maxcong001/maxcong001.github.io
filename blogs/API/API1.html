@@ -52,7 +52,7 @@
 <div class="about left">
   <div class="mermaid">
     graph TB
-    WPsendCallState-.->|send translib message|WPPRSsendAutoXML
+    WPsendCallState-.->|send translib message -- wpMG_DIALOG--WPPRS_populate_dyn_prov_subs|WPPRSsendAutoXML
     WPconstructDialog-.->|xml|prs
     subgraph SRVprs
     B2BUAProcEvent(B2BUAProcEvent)-->|invoke callback|SRVprs_entry
