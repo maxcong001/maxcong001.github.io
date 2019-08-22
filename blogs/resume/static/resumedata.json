@@ -1,0 +1,117 @@
+{
+    "head": {
+        "name": "丛明明",
+        "intention": "Linux C/C++",
+        "tel": "15153229320",
+        "email": "savagecm@qq.com",
+        "address": "青岛",
+        "age": "1988.08.28",
+        "sex": "男",
+        "school": "青岛大学",
+        "graduation": "硕士",
+        "graduationTime": "2011-9-1 至 2014-7-1",
+        "major": "信号与信息处理",
+        "honor": "2016黑客马拉松一等奖",
+        "interest": "骑行、编程、篮球",
+        "speciality": "C++、C、java",
+        "specialityPer": "80、70、60"
+
+    },
+    "blogLink": {
+        "github": "https://github.com/maxcong001",
+        "blog": "https://blog.csdn.net/Max_Cong"
+    },
+    "workExperience": {
+        "time": "2013-7 至 今",
+        "experience": [{
+                "name": "青岛朗讯 - 实习",
+                "skill": "",
+                "time": "2013.07 - 2014.07",
+                "describe": [
+                    "从事核心网iAGEF(access gateway control function)研发"
+                ]
+            },
+            {
+                "name": "青岛朗讯(现诺基亚)",
+                "skill": "",
+                "time": "2014.07 - 至今",
+                "describe": [
+                    "从事电信核心网研发工作"
+                ]
+            }
+        ]
+    },
+    "projectExperience": {
+        "time": "",
+        "experience": [{
+                "name": "iAGCF研发",
+                "skill": "C/C++ H.248",
+                "time": "2013.07 - 2015.07",
+                "describe": [
+                    "iAGCF(access gateway conntrol function)研发",
+                    "将传统电话接入IMS核心网"
+                ]
+            },
+            {
+                "name": "FSDB 研发",
+                "skill": "C/C++ home-made in memory database",
+                "time": "2015.07 - 2016.07",
+                "describe": [
+                    "FSDB 是一种subscrober DB，记录用户的service配置"
+                ]
+            },
+            {
+                "name": "IM 研发",
+                "skill": "C/C++ TCP/IP",
+                "time": "2016.07 - 2017.07",
+                "describe": [
+                    "IM(internal messaged)，是诺基亚purple核心网底层网络通信基础。独立完成TCP部分功能",
+                    "至今运行在核心网产品中。"
+                ]
+            },
+            {
+                "name": "DB wrapper 研发",
+                "skill": "C/C++ redis",
+                "time": "2017.07 - 至今",
+                "describe": [
+                    "DBwrapper是诺基亚Buliding Block 成员之一，为诺基亚所有部门提供高可用的C++ redis client"
+                ]
+            },
+            {
+                "name": "PRS 研发",
+                "skill": "Java C/C++ SIP REST API",
+                "time": "2018.07 - 至今",
+                "describe": [
+                    "PRS 是诺基亚提供的REST API, 通过REST API赋予用户call control等呼叫控制能力"
+                ]
+            }
+        ]
+    },
+    "skill": [{
+            "type": "FOSS&&innovation",
+            "describe": [
+                "诺基亚FOSS docker team 核心成员",
+                "诺基亚Redis team 成员",
+                "诺基亚 GIM(innovation) idea manager"
+            ]
+        },
+        {
+            "type": "编程语言",
+            "describe": [
+                "精通Linux C/C++, modern C++",
+                "熟练使用Java"
+            ]
+        },
+        {
+            "type": "框架",
+            "describe": [
+                "精通libevnet，boost asio，libuv等等，各种TCP/UDP 底层通信框架",
+                "熟悉java netty等通用框架"
+            ]
+        }
+    ],
+    "selfAssessment": [
+        "   stay hungry, stay foolish"
+    ]
+
+}
