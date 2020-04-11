@@ -1,7 +1,7 @@
 {
     "head": {
         "name": "丛明明",
-        "intention": "Linux C/C++",
+        "intention": "Linux C/C++ Java",
         "tel": "15153229320",
         "email": "savagecm@qq.com",
         "address": "青岛",
@@ -19,7 +19,8 @@
     },
     "blogLink": {
         "github": "https://github.com/maxcong001",
-        "blog": "https://blog.csdn.net/Max_Cong"
+        "blog": "https://blog.csdn.net/Max_Cong",
+        "wechat": "来条消息"
     },
     "workExperience": {
         "time": "2013-7 至 今",
@@ -98,7 +99,7 @@
         {
             "type": "编程语言",
             "describe": [
-                "精通Linux C/C++, modern C++",
+                "精通Linux C/C++, C++11, modern C++",
                 "熟练使用Java"
             ]
         },
