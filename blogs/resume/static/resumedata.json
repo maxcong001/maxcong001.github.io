@@ -106,7 +106,7 @@
         {
             "type": "框架",
             "describe": [
-                "精通libevnet，boost asio，libuv等等，各种TCP/UDP 底层通信框架",
+                "精通libevent，boost asio，libuv等等，各种TCP/UDP 底层通信框架",
                 "熟悉java netty等通用框架"
             ]
         }
